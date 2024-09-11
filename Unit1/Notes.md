@@ -227,3 +227,5 @@ variable startPoint. (Don't worry about the & yet.)
 
 Memory 
 C's memory model matches underlying (virtual) memory system 
+
+
