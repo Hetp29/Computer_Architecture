@@ -1,0 +1,1 @@
+These are my assignments for Comp Arch Fall 2024!

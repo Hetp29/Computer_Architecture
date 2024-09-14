@@ -20,3 +20,18 @@ int main() {
 //example: printf("Hello\n");
 //Output: Hello
 //(cursor moves to the next line)
+
+//%d is used to print an integer (whole number)
+//int number = 5;
+//printf("%d", number);
+//output is 5
+
+//%f is used to print floating-point number (decimal number)
+//flaot pi = 3.14;
+//printf("%f", pi);
+//output is 3.140000 (it prints 6 decimals by default)
+
+//%s is used to print string (text)
+//char name[] = "Alice";
+//printf("%s", name);
+//Output: Alice
