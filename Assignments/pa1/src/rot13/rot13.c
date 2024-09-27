@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <ctype.h> //isalpha() and islower() to check is character is in alphabet and is lower case
 
-void rot13(char *str) { 
+void rot13(char *str) { ls
 //char str is a single character, char *str is pointer to first character in string
     while (*str) { 
         if (isalpha(*str)) { 
