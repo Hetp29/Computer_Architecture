@@ -38,6 +38,26 @@ void printMatrix(int **matrix, int k) {
     printf("\n");
 }
 
+void printIdentityMatrix(int k) {
+    for(int i = 0; i < k; i++) {
+        for(int j = 0; j < k; j++) {
+            if(i == j) {
+                printf("1");
+            }
+            else{
+                printf("0");
+            }
+            if(j < k - 1) {
+                printf(" ");
+            }
+        }
+        if(i < k - 1) {
+            printf("\n");
+        }
+    }
+    printf("\n");
+}
+
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
@@ -93,8 +113,9 @@ int main(int argc, char *argv[]) {
     fclose(file);  
 
 
-    if (n == 0) {
-        printMatrix(matrix, k);
+    if (n == 0) { //identtiy matrix would be returned, since A^0 * A^1 equals A^(1+0) and that is A^1, the matrix itself. 
+    //only matrix that would give the matrix itself is the identity matrix
+        printIdentityMatrix(k);
         for (int i = 0; i < k; i++) {
             free(matrix[i]);
             free(result[i]);
