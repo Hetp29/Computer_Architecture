@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
     //argv provides data to be sorted (array of strings
     //argv[0] is name or path of the program and not one of the arguments provided by the user
     if (argc == 1) {
-        printf("No words to be printed. \n");
+        //printf("No words to be printed. \n");
         return EXIT_FAILURE;
         return 0;
     }
