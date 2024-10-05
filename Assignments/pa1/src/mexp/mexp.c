@@ -61,7 +61,6 @@ void printIdentityMatrix(int k) {
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        //fprintf(stderr, "Usage: %s <input_file>\n", argv[0]);
         return EXIT_FAILURE;
     }
 
@@ -69,14 +68,20 @@ int main(int argc, char *argv[]) {
     if (file == NULL) {
         return EXIT_FAILURE;
     }
+    
 
     int k;
-    fscanf(file, "%d", &k);
-
+    if(fscanf(file, "%d", &k) != 1 || k <= 0 || k > 1000) {
+        fclose(file);
+        return EXIT_FAILURE;
+    }
 
     if (k > 1000) {
         fclose(file);
-        fprintf(stderr, "Matrix size too large.\n");
+        return EXIT_FAILURE;
+    }
+    if (k <= 0) {
+        fclose(file);
         return EXIT_FAILURE;
     }
 
@@ -85,37 +90,37 @@ int main(int argc, char *argv[]) {
     int **result = (int **)malloc(k * sizeof(int *));
     if (matrix == NULL || result == NULL) {
         fclose(file);
-        fprintf(stderr, "Memory allocation failed.\n");
         return EXIT_FAILURE;
     }
+
+    
 
     for (int i = 0; i < k; i++) {
         matrix[i] = (int *)malloc(k * sizeof(int));
         result[i] = (int *)malloc(k * sizeof(int));
         if (matrix[i] == NULL || result[i] == NULL) {
             fclose(file);
-            fprintf(stderr, "Memory allocation failed.\n");
             return EXIT_FAILURE;
         }
-    }
-
-
-    for (int i = 0; i < k; i++) {
-        for (int j = 0; j < k; j++) {
-            fscanf(file, "%d", &matrix[i][j]);
+        for(int j = 0; j < k; j++) {
+            if(fscanf(file, "%d", &matrix[i][j]) != 1) {
+                fclose(file);
+                return EXIT_FAILURE;
+            }
             result[i][j] = matrix[i][j];
         }
     }
 
     int n;
-    fscanf(file, "%d", &n);
-    fclose(file);  
+    if (fscanf(file, "%d", &n) != 1 || n < 0 || n > 1000) {
+        fclose(file);
+        return EXIT_FAILURE;
+    }
+    fclose(file);
 
-
-    if (n == 0) { //identtiy matrix would be returned, since A^0 * A^1 equals A^(1+0) and that is A^1, the matrix itself. 
-    //only matrix that would give the matrix itself is the identity matrix
+    if(n == 0) {
         printIdentityMatrix(k);
-        for (int i = 0; i < k; i++) {
+        for(int i = 0; i < k; i++) {
             free(matrix[i]);
             free(result[i]);
         }
