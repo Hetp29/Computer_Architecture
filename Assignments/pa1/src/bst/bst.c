@@ -104,6 +104,7 @@ struct Node* delete(struct Node* root, int data) {
             root->data = maxNode->data;
             root->left = delete(root->left, maxNode->data);
             //printf("deleted\n");
+            //printf("Hello World\n");
         }
     }
     return root;

@@ -28,10 +28,9 @@ int main(int argc, char *argv[]) {
     //argc: how many elements are in argv and how many strings need to be stored
     //argv provides data to be sorted (array of strings
     //argv[0] is name or path of the program and not one of the arguments provided by the user
-    if (argc == 1) {
+    if (argc < 2) {
         //printf("No words to be printed. \n");
-        return EXIT_FAILURE;
-        return 0;
+        return EXIT_SUCCESS; //do not print 
     }
 
     sortStrings(argv, argc);
@@ -39,5 +38,7 @@ int main(int argc, char *argv[]) {
     for(int i = 1; i < argc; i++) {
         printf("%s\n", argv[i]);
     }
+
+    return EXIT_SUCCESS;
 
 }

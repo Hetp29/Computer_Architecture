@@ -19,9 +19,13 @@ Node* createNode(int data) {
 }
 
 void insert(Node** head, int data) {
-    Node* newNode = createNode(data);
+    
 
     if(*head == NULL || (*head)->data > data) {
+        if(*head != NULL && (*head)->data == data) {
+            return;
+        }
+        Node* newNode = createNode(data);
         newNode->next = *head;
         *head = newNode;
         return;
@@ -33,10 +37,14 @@ void insert(Node** head, int data) {
     }
 
     if(current->data == data) {
-        free(newNode);
         return;
     }
 
+    if(current->next != NULL && current->next->data == data) {
+        return;
+    }
+
+    Node* newNode = createNode(data);
     newNode->next = current->next;
     current->next = newNode;
 }

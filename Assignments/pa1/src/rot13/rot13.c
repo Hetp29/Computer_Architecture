@@ -1,32 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h> //isalpha() and islower() to check is character is in alphabet and is lower case
+#include <ctype.h> //isalpha()
 
-void rot13(char *str) {
-//char str is a single character, char *str is pointer to first character in string
-    while (*str) { 
-        if (isalpha(*str)) { 
-            if(islower(*str)) { 
-                printf("%c", (*str - 'a' + 13) % 26 + 'a'); 
+void rot13(const char *str) {
+    while(*str) {
+        char ch = *str; //current character
+        if(isalpha(ch)) {
+            if(ch >= 'a' && ch <= 'z') {
+                ch = (ch - 'a' + 13) % 26 + 'a';
             }
-            else {
-                printf("%c", (*str - 'A' + 13) % 26 + 'A'); 
+            else if (ch >= 'A' && ch <= 'Z') {
+                ch = (ch - 'A' + 13) % 26 + 'A';
             }
         }
-        else {
-            printf("%c", *str); 
-        }
-        str++; 
+        putchar(ch);
+        str++;
     }
-    printf("\n");
+    putchar('\n');
 }
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        return 1;
+        return EXIT_FAILURE;
     }
 
     rot13(argv[1]);
 
-    return 0;
+    return EXIT_SUCCESS;
 }
