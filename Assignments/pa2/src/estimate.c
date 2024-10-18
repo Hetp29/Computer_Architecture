@@ -39,3 +39,59 @@ void transpose(double **matrix, double **result, int rows, int cols) {
         }
     }
 }
+
+//matrix multiplication 
+void multiply(double **A, double **B, double **result, int aRows, int bCols, int aCols) {
+    for(int i = 0; i < aRows; i++) {
+        for(int j = 0; j < bCols; j++) {
+            result[i][j] = 0;
+            for(int k = 0; k < aCols; k++) {
+                result[i][j] += A[i][k] * B[k][j];
+            }
+        }
+    }
+}
+
+//gauss-jordan elimination to invert n x n matrix
+void invert(double **matrix, int n) {
+    double **I = (double **)malloc(n * sizeof(double *));
+    for(int i = 0; i < n; i++) {
+        I[i] = (double *)malloc(n * sizeof(double ));
+        for(int j = 0; j < n; j++) {
+            if(i == j) {
+                I[i][j] = 1;
+            }
+            else {
+                I[i][j] = 0;
+            }
+        }
+    }
+
+    for(int p = 0; p < n; p++) {
+        double f = matrix[p][p];
+        for(int j = 0; j < n; j++) {
+            matrix[p][j] /= f;
+            I[p][j] /= f;
+        }
+
+        for(int i = 0; i < n; i++) {
+            if (i != p) {
+                f = matrix[i][p];
+                for(int j = 0; j < n; j++) {
+                    matrix[i][j] -= matrix[p][j] * f;
+                    I[i][j] -= I[p][j] * f;
+                }
+            }
+        }
+    }
+
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < n; j++) {
+            matrix[i][j] = I[i][j];
+        }
+    }
+    for(int i = 0; i < n; i++) {
+        free(I[i]);
+    }
+    free(I);
+}
