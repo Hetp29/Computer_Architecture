@@ -8,12 +8,12 @@ void sortStrings(char *arr[], int n) {
     //sorting algorithm 
     char *temp;
     //bubble sort, largest element is placed in correct position (end of the array), then second largest, etc.
-    for(int i = 1; i < n; i++) {
-        for(int j = i + 1; j < n; j++) {
-            if(strcmp(arr[i], arr[j]) > 0) {
-                temp = arr[i];
-                arr[i] = arr[j];
-                arr[j] = temp;
+    for(int i = 1; i < n - 1; i++) {
+        for(int j = 1; j < n - i; j++) {
+            if(strcmp(arr[j], arr[j + 1]) > 0) {
+                temp = arr[j];
+                arr[j] = arr[j + 1];
+                arr[j + 1] = temp;
             }
         }
 

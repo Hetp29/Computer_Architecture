@@ -1,6 +1,7 @@
 //checking for balanced parentheses and brackets in string 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h> //strlen() for calculation of space needed for stack
 
 typedef struct Stack{
     char *items; //points to dynamically allocated array, stack is not fixed size it is dynamically allocated based on capacity
@@ -12,17 +13,14 @@ Stack* createStack(int capacity) {
     Stack *s = (Stack*)malloc(sizeof(Stack)); //allocate memory for stack structure
     s->items = (char*)malloc(capacity * sizeof(char)); //allocate memory for cstack items
     s->top = -1; 
-    s->capacity = capacity; //initial capacity
+    s->capacity  = capacity; //initial capacity
     return s; 
 }
 
 int push(Stack *s, char item) {
-    if (s->top >= s->capacity - 1) {
-        s->capacity *= 2;//stack is full and need to resize, double capacity
-        s->items = (char*)realloc(s->items, s->capacity *sizeof(char));//can dynamically resize to accomodate items without losing existing data
-        if(s->items == NULL) {
-            return 0;
-        }
+    
+    if(s->top >= s->capacity - 1) {
+        return 0; //stack is full
     }
     s->items[++(s->top)] = item; //item is added to stack
     return 1; 
@@ -36,13 +34,18 @@ char pop(Stack *s) {
 }
 
 int isBalanced(char* str) {
-    Stack *stack = createStack(100);  //initially size 100
+    int length = strlen(str);
+    Stack *stack = createStack(length);  //initially size 100
     int i = 0;
     char expected; //expected matching character 
 
     while (*str) {
         if (*str == '(' || *str == '[' || *str == '{') {
-            push(stack, *str);  //push opening brackets to stack
+            if(!push(stack, *str)) {
+                free(stack->items);
+                free(stack);
+            }
+            //push(stack, *str);  //push opening brackets to stack
         } 
         else if (*str == ')' || *str == ']' || *str == '}') {
             if (stack->top == -1) {
@@ -89,7 +92,7 @@ int isBalanced(char* str) {
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        return EXIT_FAILURE; 
+        return EXIT_SUCCESS; 
     }
 
     if (isBalanced(argv[1])) {

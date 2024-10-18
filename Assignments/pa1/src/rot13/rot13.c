@@ -21,7 +21,7 @@ void rot13(const char *str) {
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        return EXIT_FAILURE;
+        return EXIT_SUCCESS;
     }
 
     rot13(argv[1]);

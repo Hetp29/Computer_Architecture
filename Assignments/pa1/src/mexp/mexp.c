@@ -5,6 +5,12 @@ void multiply(int **result, int **A, int **B, int k) {
     int **temp = (int **)malloc(k * sizeof(int *));
     for(int i = 0; i < k; i++) {
         temp[i] = (int *)malloc(k * sizeof(int));
+        if(!temp[i]) {
+            for(int x = 0; x < i; x++) {
+                free(temp[x]);
+            }
+            free(temp);
+        }
         for(int j = 0; j < k; j++) {
             temp[i][j] = 0;
             for(int l = 0; l < k; l++) {
@@ -61,28 +67,19 @@ void printIdentityMatrix(int k) {
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        return EXIT_FAILURE;
-    }
+        return EXIT_SUCCESS; //program receives one argument (filename)
+    } 
 
     FILE *file = fopen(argv[1], "r");
     if (file == NULL) {
-        return EXIT_FAILURE;
-    }
+        return EXIT_SUCCESS; //if fopen returns NULL, file cannot be opened 
+    } 
     
 
     int k;
     if(fscanf(file, "%d", &k) != 1 || k <= 0 || k > 1000) {
         fclose(file);
-        return EXIT_FAILURE;
-    }
-
-    if (k > 1000) {
-        fclose(file);
-        return EXIT_FAILURE;
-    }
-    if (k <= 0) {
-        fclose(file);
-        return EXIT_FAILURE;
+        return EXIT_SUCCESS; //k is read and size is within range 
     }
 
 
@@ -90,7 +87,8 @@ int main(int argc, char *argv[]) {
     int **result = (int **)malloc(k * sizeof(int *));
     if (matrix == NULL || result == NULL) {
         fclose(file);
-        return EXIT_FAILURE;
+        free(matrix);
+        free(result);
     }
 
     
@@ -99,13 +97,23 @@ int main(int argc, char *argv[]) {
         matrix[i] = (int *)malloc(k * sizeof(int));
         result[i] = (int *)malloc(k * sizeof(int));
         if (matrix[i] == NULL || result[i] == NULL) {
+            for(int j = 0; j <= i; j++) {
+                free(matrix[i]);
+                free(result[j]);
+            }
+            free(matrix);
+            free(result);
             fclose(file);
-            return EXIT_FAILURE;
         }
         for(int j = 0; j < k; j++) {
             if(fscanf(file, "%d", &matrix[i][j]) != 1) {
+                for(int x = 0; x <= i; x++) {
+                    free(matrix[x]);
+                    free(result[x]);
+                }
+                free(matrix);
+                free(result);
                 fclose(file);
-                return EXIT_FAILURE;
             }
             result[i][j] = matrix[i][j];
         }
@@ -113,8 +121,13 @@ int main(int argc, char *argv[]) {
 
     int n;
     if (fscanf(file, "%d", &n) != 1 || n < 0 || n > 1000) {
+        for(int i = 0; i < k; i++) {
+            free(matrix[i]);
+            free(result[i]);
+        }
+        free(matrix);
+        free(result);
         fclose(file);
-        return EXIT_FAILURE;
     }
     fclose(file);
 
