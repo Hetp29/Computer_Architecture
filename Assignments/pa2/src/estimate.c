@@ -4,7 +4,7 @@
 //need triple pointer for X matrix because we allocating a 2D array (pointer to a pointer to  double) and we're passing to function, we need extra third pinter inside function which points to matrix pointer
 //Y is prices of houses but has double pointer because it is 1D array and inside function
 //if you want to allocate memory inside a function, you need to add extra pointer because the function needs to modify original pointer outside the function in order to allocate space
-void read(char filename, double ***X, double **Y, int *n, int *k, int training) {
+void read(char *filename, double ***X, double **Y, int *n, int *k, int training) {
     //training is 1 if it's training data and 0 if it's test data
     FILE *file = fopen(filename, "r");
     if(file == NULL) exit(EXIT_FAILURE);
@@ -145,14 +145,54 @@ void calculateWeights(double **X, double *Y, int n, int k, double **W) {
 
 //predict house prices for test data using weights
 void predict(double **X, double **W, int n, int k) {
-    double **predictions = (double **)malloc(n * sizeof(double *));
     for(int i = 0; i < n; i++) {
-        predictions[i] = (double *)malloc(1 * sizeof(double));
+        double predicted = 0;
+        for(int j = 0; j <= k; j++) {
+            predicted += X[i][j] * W[j][0];
+        }
+        printf("%.0f\n", predicted);
     }
-    multiplyVector(X, *W, predictions, n, k + 1); //multiply matrix X with W weights to get predicted prices of houses
-    for(int i = 0; i < n; i++) {
-        printf("%.0f\n", predictions[i][0]);
-        free(predictions[i]);
+}
+
+int main(int argc, char *argv[]) {
+    if (argc != 3) return EXIT_FAILURE;
+
+    double **xTrain;
+    double *yTrain;
+    int nTrain, kTrain;
+
+    read(argv[1], &xTrain, &yTrain, &nTrain, &kTrain, 1);
+
+    double **W = (double **)malloc((kTrain + 1) * sizeof(double *));
+    for(int i = 0; i <= kTrain; i++) {
+        W[i] = (double *)malloc(1 * sizeof(double));
     }
-    free(predictions);
+
+    calculateWeights(xTrain, yTrain, nTrain, kTrain, W);
+    
+    double **xTest;
+    int nTest, kTest;
+
+    read(argv[2], &xTest, NULL, &nTest, &kTest, 0);
+
+    if(kTrain != kTest) return EXIT_FAILURE;
+
+    predict(xTest, W, nTest, kTest);
+    
+    for(int i = 0; i <= kTrain; i++) {
+        free(W[i]);
+    }
+    free(W);
+
+    for(int i = 0; i < nTrain; i++) {
+        free(xTrain[i]);
+    }
+    free(xTrain);
+    free(yTrain);
+    for(int i = 0; i < nTest; i++) {
+        free(xTest[i]);
+    }
+    free(xTest);
+
+    return EXIT_SUCCESS;
 }
