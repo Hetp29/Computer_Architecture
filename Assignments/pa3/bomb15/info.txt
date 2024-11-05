@@ -1,0 +1,152 @@
+hnp41@cp:~/Computer_Architecture/Computer_Architecture/Assignments/pa3/bomb15$ gdb bomb
+GNU gdb (Ubuntu 12.1-0ubuntu1~22.04.2) 12.1
+Copyright (C) 2022 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for detai--Type <RET> for more, q to quit, c to continue without paging--
+ls.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<https://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+--Type <RET> for more, q to quit, c to continue without paging--
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from bomb...
+(gdb) break main
+Breakpoint 1 at 0x235d: file bomb.c, line 37.
+(gdb) run
+Starting program: /common/home/hnp41/Computer_Architecture/Computer_Architecture/Assignments/pa3/bomb15/bomb 
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+
+Breakpoint 1, main (argc=1, argv=0xffffcfb4) at bomb.c:37
+37      {
+(gdb) disassemble phase_1
+Dump of assembler code for function phase_1:
+   0x5655751e <+0>:     sub    $0x20,%esp
+   0x56557521 <+3>:     movl   $0x0,0x10(%esp)
+   0x56557529 <+11>:    lea    0x10(%esp),%eax
+   0x5655752d <+15>:    push   %eax
+   0x5655752e <+16>:    push   $0x56559440
+   0x56557533 <+21>:    push   0x2c(%esp)
+   0x56557537 <+25>:    call   0xf7daed00 <__isoc99_sscanf>
+   0x5655753c <+30>:    add    $0x10,%esp
+   0x5655753f <+33>:    cmp    $0x1,%eax
+--Type <RET> for more, q to quit, c to continue without paging--
+   0x56557542 <+36>:    jne    0x56557552 <phase_1+52>
+   0x56557544 <+38>:    cmpl   $0x121,0xc(%esp)
+   0x5655754c <+46>:    jne    0x56557559 <phase_1+59>
+   0x5655754e <+48>:    add    $0x1c,%esp
+   0x56557551 <+51>:    ret    
+   0x56557552 <+52>:    call   0x56557c5b <explode_bomb>
+   0x56557557 <+57>:    jmp    0x56557544 <phase_1+38>
+   0x56557559 <+59>:    call   0x56557c5b <explode_bomb>
+   0x5655755e <+64>:    jmp    0x5655754e <phase_1+48>
+End of assembler dump.
+(gdb) b phase_1
+Breakpoint 2 at 0x5655751e
+(gdb) set disassemble-next-line on
+(gdb) c
+Continuing.
+Welcome to my fiendish little bomb. You have 9 phases with
+which to blow yourself up. Have a nice day!
+i dont know
+
+Breakpoint 2, 0x5655751e in phase_1 ()
+=> 0x5655751e <phase_1+0>:      83 ec 20        sub    $0x20,%esp
+(gdb) ni
+0x56557521 in phase_1 ()
+=> 0x56557521 <phase_1+3>:      c7 44 24 10 00 00 00 00  movl   $0x0,0x10(%esp)
+(gdb) ni
+0x56557529 in phase_1 ()
+=> 0x56557529 <phase_1+11>:     8d 44 24 10     lea    0x10(%esp),%eax
+(gdb) ni
+0x5655752d in phase_1 ()
+=> 0x5655752d <phase_1+15>:     50      push   %eax
+(gdb) ni
+0x5655752e in phase_1 ()
+=> 0x5655752e <phase_1+16>:     68 40 94 55 56  push   $0x56559440
+(gdb) ni
+0x56557533 in phase_1 ()
+=> 0x56557533 <phase_1+21>:     ff 74 24 2c     push   0x2c(%esp)
+(gdb) x/s $esp + 0x2c
+0xffffced0:     "\340\307UV\264\317\377\377\264\317\377\377\250sUV"
+(gdb) x/a $esp + 0x2c
+0xffffced0:     0x5655c7e0 <input_strings>
+(gdb) x/s 0x5655c7e0
+0x5655c7e0 <input_strings>:     "i dont know"
+(gdb) ni
+0x56557537 in phase_1 ()
+=> 0x56557537 <phase_1+25>:     e8 c4 77 85 a1  call   0xf7daed00 <__isoc99_sscanf>
+(gdb) ni
+0x5655753c in phase_1 ()
+=> 0x5655753c <phase_1+30>:     83 c4 10        add    $0x10,%esp
+(gdb) p $eax
+$1 = 0
+(gdb) ni
+0x5655753f in phase_1 ()
+=> 0x5655753f <phase_1+33>:     83 f8 01        cmp    $0x1,%eax
+(gdb) ni
+0x56557542 in phase_1 ()
+=> 0x56557542 <phase_1+36>:     75 0e   jne    0x56557552 <phase_1+52>
+(gdb) ni
+0x56557552 in phase_1 ()
+=> 0x56557552 <phase_1+52>:     e8 04 07 00 00  call   0x56557c5b <explode_bomb>
+(gdb) quit
+A debugging session is active.
+
+        Inferior 1 [process 614876] will be killed.
+
+Quit anyway? (y or n) y
+hnp41@cp:~/Computer_Architecture/Computer_Architecture/Assignments/pa3/bomb15$ 
+
+
+
+
+
+
+hnp41@cp:~/Computer_Architecture/Computer_Architecture/Assignments/pa3/bomb15$ gdb bomb
+GNU gdb (Ubuntu 12.1-0ubuntu1~22.04.2) 12.1
+Copyright (C) 2022 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "x86_64-linux-gnu".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<https://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word"...
+Reading symbols from bomb...
+(gdb) b explode_bomb
+Breakpoint 1 at 0x2c5b
+(gdb) r
+Starting program: /common/home/hnp41/Computer_Architecture/Computer_Architecture/Assignments/pa3/bomb15/bomb 
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/lib/x86_64-linux-gnu/libthread_db.so.1".
+Welcome to my fiendish little bomb. You have 9 phases with
+which to blow yourself up. Have a nice day!
+oh no!
+
+Breakpoint 1, 0x56557c5b in explode_bomb ()
+(gdb) quit
+A debugging session is active.
+
+        Inferior 1 [process 623316] will be killed.
+
+Quit anyway? (y or n) y
+hnp41@cp:~/Computer_Architecture/Computer_Architecture/Assignments/pa3/bomb15$ 
+
+
+
+set disassemble-next-line on
+Pobody's nerfect. Therefore, vveryone is emperfect.
