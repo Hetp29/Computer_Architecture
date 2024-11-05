@@ -150,3 +150,4 @@ hnp41@cp:~/Computer_Architecture/Computer_Architecture/Assignments/pa3/bomb15$
 
 set disassemble-next-line on
 Pobody's nerfect. Therefore, vveryone is emperfect.
+It is important not to forget the things you must remember.
