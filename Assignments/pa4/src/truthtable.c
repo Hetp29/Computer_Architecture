@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
 #define MAX_VAR_NAME 17
 #define MAX_VARS 1024
 #define MAX_GATES 1024
+
+/* Replace stdbool.h with our own boolean type */
+typedef enum { FALSE = 0, TRUE = 1 } bool_t;
 
 typedef enum {
     AND,
@@ -51,7 +53,7 @@ typedef struct {
     int num_outputs;
     Gate gates[MAX_GATES];
     int gate_count;
-    bool* values;
+    bool_t* values;
 } Circuit;
 
 // Function to find or add a variable
@@ -81,7 +83,8 @@ int find_or_add_var(Circuit* circuit, const char* name) {
 Graph* create_graph(int num_vertices) {
     Graph* graph = malloc(sizeof(Graph));
     graph->num_vertices = num_vertices;
-    graph->lists = calloc(num_vertices, sizeof(AdjList));
+    graph->lists = malloc(num_vertices * sizeof(AdjList));
+    memset(graph->lists, 0, num_vertices * sizeof(AdjList));
     for (int i = 0; i < num_vertices; i++) {
         graph->lists[i].edges = malloc(sizeof(int) * num_vertices);
         graph->lists[i].capacity = num_vertices;
@@ -96,7 +99,7 @@ void add_edge(Graph* graph, int from, int to) {
     }
 }
 
-void topological_sort_util(Graph* graph, int vertex, bool* visited, bool* stack, int* order, int* order_index) {
+void topological_sort_util(Graph* graph, int vertex, bool_t* visited, bool_t* stack, int* order, int* order_index) {
     if (stack[vertex]) {
         // Cycle detected
         fprintf(stderr, "Circuit contains a cycle\n");
@@ -105,21 +108,23 @@ void topological_sort_util(Graph* graph, int vertex, bool* visited, bool* stack,
     
     if (visited[vertex]) return;
     
-    visited[vertex] = true;
-    stack[vertex] = true;
+    visited[vertex] = TRUE;
+    stack[vertex] = TRUE;
     
     for (int i = 0; i < graph->lists[vertex].count; i++) {
         int adjacent = graph->lists[vertex].edges[i];
         topological_sort_util(graph, adjacent, visited, stack, order, order_index);
     }
     
-    stack[vertex] = false;
+    stack[vertex] = FALSE;
     order[(*order_index)++] = vertex;
 }
 
 int* topological_sort(Graph* graph) {
-    bool* visited = calloc(graph->num_vertices, sizeof(bool));
-    bool* stack = calloc(graph->num_vertices, sizeof(bool));
+    bool_t* visited = malloc(graph->num_vertices * sizeof(bool_t));
+    bool_t* stack = malloc(graph->num_vertices * sizeof(bool_t));
+    memset(visited, 0, graph->num_vertices * sizeof(bool_t));
+    memset(stack, 0, graph->num_vertices * sizeof(bool_t));
     int* order = malloc(sizeof(int) * graph->num_vertices);
     int order_index = 0;
     
@@ -143,15 +148,15 @@ void free_graph(Graph* graph) {
 }
 
 // Get value of a variable (including constants)
-bool get_value(bool* values, int var_index) {
-    if (var_index == -1) return false;  // Constant 0
-    if (var_index == -2) return true;   // Constant 1
+bool_t get_value(bool_t* values, int var_index) {
+    if (var_index == -1) return FALSE;  // Constant 0
+    if (var_index == -2) return TRUE;   // Constant 1
     return values[var_index];
 }
 
 // Evaluate a single gate
-void evaluate_gate(Gate* gate, bool* values) {
-    bool result;
+void evaluate_gate(Gate* gate, bool_t* values) {
+    bool_t result;
     switch (gate->type) {
         case AND:
             result = get_value(values, gate->inputs[0]) && get_value(values, gate->inputs[1]);
@@ -192,7 +197,7 @@ void evaluate_gate(Gate* gate, bool* values) {
             }
             for (int i = 0; i < (1 << gate->size); i++) {
                 if (gate->outputs[i] >= 0) {
-                    values[gate->outputs[i]] = (i == input_val);
+                    values[gate->outputs[i]] = (i == input_val) ? TRUE : FALSE;
                 }
             }
             break;
@@ -375,8 +380,7 @@ void generate_truth_table(Circuit* circuit) {
             }
         }
     }
-    
-    // Add edges for dependencies
+
     for (int i = 0; i < circuit->gate_count; i++) {
         Gate* gate = &circuit->gates[i];
         for (int j = 0; j < gate->num_inputs; j++) {
@@ -395,12 +399,13 @@ void generate_truth_table(Circuit* circuit) {
     
     // Generate truth table
     int num_rows = 1 << circuit->num_inputs;
-    circuit->values = calloc(circuit->var_count, sizeof(bool));
+    circuit->values = malloc(circuit->var_count * sizeof(bool_t));
+    memset(circuit->values, 0, circuit->var_count * sizeof(bool_t));
     
     for (int row = 0; row < num_rows; row++) {
         // Set input values
         for (int i = 0; i < circuit->num_inputs; i++) {
-            circuit->values[i] = (row & (1 << (circuit->num_inputs - 1 - i))) != 0;
+            circuit->values[i] = (row & (1 << (circuit->num_inputs - 1 - i))) ? TRUE : FALSE;
         }
         
         // Evaluate gates in topological order
